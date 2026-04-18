@@ -1,5 +1,6 @@
 :root {
   --card-min-width: 160px;
+  --card-height: 140px;
   --accent: #e94560;
   --bg: #1a1a2e;
   --surface: #16213e;
@@ -55,14 +56,14 @@ h1.page-title {
   gap: 0.4rem;
 }
 
-.size-controls span {
+.size-controls > span {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
 }
 
-.size-controls button {
+.size-controls > button {
   background: var(--border);
   color: #e0e0e0;
   border: none;
@@ -77,8 +78,169 @@ h1.page-title {
   transition: background 0.15s;
 }
 
-.size-controls button:hover {
+.size-controls > button:hover {
   background: var(--accent);
+}
+
+/* ── Gear button & panel ── */
+.gear-wrapper {
+  position: relative;
+  margin-left: 0.3rem;
+}
+
+.gear-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.gear-btn:hover,
+.gear-btn.active {
+  color: #a0a8c0;
+  border-color: #a0a8c0;
+  background: var(--surface);
+}
+
+.gear-panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  width: 230px;
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.gear-panel.open {
+  display: flex;
+}
+
+.gear-section-title {
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label-color);
+  padding-bottom: 0.15rem;
+}
+
+.gear-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.gear-row label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  min-width: 44px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.gear-row .gear-val {
+  flex: 1;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #e0e0e0;
+  font-variant-numeric: tabular-nums;
+}
+
+.gear-row button {
+  background: var(--border);
+  color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.gear-row button:hover {
+  background: var(--accent);
+}
+
+.gear-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.1rem 0;
+}
+
+.gear-panel input,
+.gear-panel select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 0.78rem;
+  padding: 0.35rem 0.55rem;
+  width: 100%;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.gear-panel input:focus,
+.gear-panel select:focus {
+  border-color: #5b8dee;
+}
+
+.gear-panel input::placeholder {
+  color: var(--text-dim);
+}
+
+.gear-panel select option {
+  background: var(--surface);
+}
+
+.gear-btn-full {
+  background: var(--border);
+  color: #e0e0e0;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s;
+  font-family: inherit;
+  text-align: center;
+}
+
+.gear-btn-full:hover {
+  background: #1a4080;
+}
+
+.gear-btn-full.delete-active {
+  background: #4a1530;
+  color: #ff8aaa;
+  border: 1px solid #6b2040;
+}
+
+.gear-btn-full.delete-active:hover {
+  background: #6b1a40;
 }
 
 /* ── Search bar ── */
@@ -192,6 +354,7 @@ h1.page-title {
 
 /* ── Cards ── */
 .news-card {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -203,8 +366,10 @@ h1.page-title {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.7rem;
   cursor: grab;
+  min-height: var(--card-height);
 }
 
 .news-card:hover {
@@ -250,4 +415,39 @@ h1.page-title {
   color: var(--text-dim);
   line-height: 1.4;
   pointer-events: none;
+}
+
+/* ── Delete overlay ── */
+.delete-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(233, 69, 96, 0.18);
+  border-radius: 11px;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.delete-mode-active .news-card .delete-overlay {
+  display: flex;
+}
+
+.delete-overlay button {
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  width: 38px;
+  height: 38px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.15s, background 0.15s;
+  line-height: 1;
+}
+
+.delete-overlay button:hover {
+  transform: scale(1.12);
+  background: #c73050;
 }

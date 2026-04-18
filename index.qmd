@@ -7,8 +7,44 @@ title: ""
   <h1 class="page-title">Firefox-Homepage</h1>
   <div class="size-controls">
     <span>Kartengröße</span>
-    <button onclick="adjustSize(-20)" title="Kleiner">−</button>
-    <button onclick="adjustSize(20)"  title="Größer">＋</button>
+    <button onclick="adjustSize(-20)" title="Kleiner (Breite & Höhe)">−</button>
+    <button onclick="adjustSize(20)"  title="Größer (Breite & Höhe)">＋</button>
+    <div class="gear-wrapper">
+      <button class="gear-btn" id="gear-toggle-btn" onclick="toggleGear(event)" title="Einstellungen">⚙</button>
+      <div class="gear-panel" id="gear-panel">
+
+        <div class="gear-section-title">Breite &amp; Höhe</div>
+        <div class="gear-row">
+          <label>Breite</label>
+          <button onclick="adjustWidth(-20)">−</button>
+          <span class="gear-val" id="gear-width-val">160px</span>
+          <button onclick="adjustWidth(20)">＋</button>
+        </div>
+        <div class="gear-row">
+          <label>Höhe</label>
+          <button onclick="adjustHeight(-20)">−</button>
+          <span class="gear-val" id="gear-height-val">140px</span>
+          <button onclick="adjustHeight(20)">＋</button>
+        </div>
+
+        <hr class="gear-divider">
+        <div class="gear-section-title">Karte hinzufügen</div>
+        <select id="gear-section">
+          <option value="grid-de">Deutsch</option>
+          <option value="grid-en">English</option>
+          <option value="grid-sci">Wissenschaft</option>
+          <option value="grid-did">Didaktik</option>
+        </select>
+        <input id="gear-name" type="text" placeholder="Name">
+        <input id="gear-url"  type="text" placeholder="URL (z. B. example.com)">
+        <input id="gear-desc" type="text" placeholder="Beschreibung (optional)">
+        <button class="gear-btn-full" onclick="addCard()">＋ Hinzufügen</button>
+
+        <hr class="gear-divider">
+        <button class="gear-btn-full" id="delete-mode-btn" onclick="toggleDeleteMode()">🗑 Karten löschen</button>
+
+      </div>
+    </div>
   </div>
 </div>
 
@@ -56,7 +92,7 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
       <span class="name">Der Spiegel</span>
       <span class="desc">Nachrichten & Investigativjournalismus</span>
     </a>
-    </div>
+  </div>
 </div>
 
 <!-- ══ ENGLISH ══ -->
@@ -178,111 +214,304 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
 (function () {
   const GRIDS = ['grid-de', 'grid-en', 'grid-sci', 'grid-did'];
 
-  // ── Card size ──
-  let cardSize = parseInt(localStorage.getItem('cardSize') || '160');
+  // ── Card size (migrate old 'cardSize' key) ──
+  let cardWidth  = parseInt(localStorage.getItem('cardWidth')  || localStorage.getItem('cardSize') || '160');
+  let cardHeight = parseInt(localStorage.getItem('cardHeight') || '140');
+
   applySize();
+  updateGearDisplay();
 
   function applySize() {
-    document.documentElement.style.setProperty('--card-min-width', cardSize + 'px');
+    document.documentElement.style.setProperty('--card-min-width', cardWidth  + 'px');
+    document.documentElement.style.setProperty('--card-height',    cardHeight + 'px');
   }
 
+  function updateGearDisplay() {
+    var wEl = document.getElementById('gear-width-val');
+    var hEl = document.getElementById('gear-height-val');
+    if (wEl) wEl.textContent = cardWidth  + 'px';
+    if (hEl) hEl.textContent = cardHeight + 'px';
+  }
+
+  // Both dimensions at once
   window.adjustSize = function (delta) {
-    cardSize = Math.max(100, Math.min(320, cardSize + delta));
-    localStorage.setItem('cardSize', cardSize);
+    cardWidth  = Math.max(100, Math.min(320, cardWidth  + delta));
+    cardHeight = Math.max(80,  Math.min(500, cardHeight + delta));
+    localStorage.setItem('cardWidth',  cardWidth);
+    localStorage.setItem('cardHeight', cardHeight);
     applySize();
+    updateGearDisplay();
+  };
+
+  // Width only
+  window.adjustWidth = function (delta) {
+    cardWidth = Math.max(100, Math.min(320, cardWidth + delta));
+    localStorage.setItem('cardWidth', cardWidth);
+    applySize();
+    updateGearDisplay();
+  };
+
+  // Height only
+  window.adjustHeight = function (delta) {
+    cardHeight = Math.max(80, Math.min(500, cardHeight + delta));
+    localStorage.setItem('cardHeight', cardHeight);
+    applySize();
+    updateGearDisplay();
+  };
+
+  // ── Gear panel ──
+  var gearOpen = false;
+
+  window.toggleGear = function (e) {
+    e.stopPropagation();
+    gearOpen = !gearOpen;
+    document.getElementById('gear-panel').classList.toggle('open', gearOpen);
+    document.getElementById('gear-toggle-btn').classList.toggle('active', gearOpen);
+  };
+
+  document.addEventListener('click', function (e) {
+    if (gearOpen && !e.target.closest('.gear-wrapper')) {
+      gearOpen = false;
+      document.getElementById('gear-panel').classList.remove('open');
+      document.getElementById('gear-toggle-btn').classList.remove('active');
+    }
+  });
+
+  // ── Delete mode ──
+  var deleteMode = false;
+
+  window.toggleDeleteMode = function () {
+    deleteMode = !deleteMode;
+    document.body.classList.toggle('delete-mode-active', deleteMode);
+    var btn = document.getElementById('delete-mode-btn');
+    if (btn) {
+      btn.textContent = deleteMode ? '✕ Abbrechen' : '🗑 Karten löschen';
+      btn.classList.toggle('delete-active', deleteMode);
+    }
+  };
+
+  function deleteCard(card, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var id     = card.dataset.id;
+    var gridId = card.dataset.grid;
+
+    var customs   = getCustomCards();
+    var customIdx = customs.findIndex(function (c) { return c.id === id; });
+    if (customIdx !== -1) {
+      customs.splice(customIdx, 1);
+      saveCustomCards(customs);
+    } else {
+      var hidden = getHiddenCards();
+      if (hidden.indexOf(id) === -1) { hidden.push(id); }
+      saveHiddenCards(hidden);
+    }
+
+    card.remove();
+
+    var grid = document.getElementById(gridId);
+    if (grid) {
+      var order = Array.from(grid.children).map(function (c) { return c.dataset.id; });
+      localStorage.setItem('order-' + gridId, JSON.stringify(order));
+    }
+  }
+
+  function getCustomCards() {
+    try { return JSON.parse(localStorage.getItem('custom-cards') || '[]'); } catch (e) { return []; }
+  }
+  function saveCustomCards(arr) { localStorage.setItem('custom-cards', JSON.stringify(arr)); }
+
+  function getHiddenCards() {
+    try { return JSON.parse(localStorage.getItem('hidden-cards') || '[]'); } catch (e) { return []; }
+  }
+  function saveHiddenCards(arr) { localStorage.setItem('hidden-cards', JSON.stringify(arr)); }
+
+  // ── Hide deleted built-in cards ──
+  getHiddenCards().forEach(function (id) {
+    var card = document.querySelector('[data-id="' + id + '"]');
+    if (card) card.remove();
+  });
+
+  // ── Build a card element ──
+  function createCardElement(c) {
+    var a = document.createElement('a');
+    a.className = 'news-card';
+    a.dataset.id   = c.id;
+    a.dataset.grid = c.section;
+    a.href         = c.url;
+    a.target       = '_blank';
+
+    var domain = '';
+    try { domain = new URL(c.url).hostname; } catch (e2) {}
+
+    var img = document.createElement('img');
+    img.src = 'https://www.google.com/s2/favicons?domain=' + domain + '&sz=64';
+    img.alt = '';
+    a.appendChild(img);
+
+    var nameEl = document.createElement('span');
+    nameEl.className   = 'name';
+    nameEl.textContent = c.name;
+    a.appendChild(nameEl);
+
+    if (c.desc) {
+      var descEl = document.createElement('span');
+      descEl.className   = 'desc';
+      descEl.textContent = c.desc;
+      a.appendChild(descEl);
+    }
+
+    addDeleteOverlay(a);
+    return a;
+  }
+
+  function addDeleteOverlay(card) {
+    var overlay = document.createElement('div');
+    overlay.className = 'delete-overlay';
+    var btn = document.createElement('button');
+    btn.textContent = '✕';
+    btn.addEventListener('click', function (e) { deleteCard(card, e); });
+    overlay.appendChild(btn);
+    card.appendChild(overlay);
+  }
+
+  // ── Load saved custom cards ──
+  getCustomCards().forEach(function (c) {
+    var grid = document.getElementById(c.section);
+    if (!grid) return;
+    grid.appendChild(createCardElement(c));
+  });
+
+  // ── Add delete overlays to built-in cards ──
+  GRIDS.forEach(function (gridId) {
+    var grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.querySelectorAll('.news-card').forEach(function (card) {
+      card.dataset.grid = gridId;
+      addDeleteOverlay(card);
+    });
+  });
+
+  // ── Add card from gear panel ──
+  window.addCard = function () {
+    var section = document.getElementById('gear-section').value;
+    var name    = document.getElementById('gear-name').value.trim();
+    var url     = document.getElementById('gear-url').value.trim();
+    var desc    = document.getElementById('gear-desc').value.trim();
+    if (!name || !url) return;
+
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+    var id = 'custom-' + Date.now();
+    var c  = { id: id, section: section, name: name, url: url, desc: desc };
+
+    var grid = document.getElementById(section);
+    if (!grid) return;
+
+    var card = createCardElement(c);
+    grid.appendChild(card);
+    initCardDrag(card);
+
+    var customs = getCustomCards();
+    customs.push(c);
+    saveCustomCards(customs);
+
+    var order = Array.from(grid.children).map(function (ch) { return ch.dataset.id; });
+    localStorage.setItem('order-' + section, JSON.stringify(order));
+
+    document.getElementById('gear-name').value = '';
+    document.getElementById('gear-url').value  = '';
+    document.getElementById('gear-desc').value = '';
   };
 
   // ── Collapse / expand ──
   window.toggleSection = function (gridId) {
-    const grid = document.getElementById(gridId);
-    const btn  = document.getElementById('btn-' + gridId);
-    const isCollapsed = grid.classList.toggle('collapsed');
+    var grid        = document.getElementById(gridId);
+    var btn         = document.getElementById('btn-' + gridId);
+    var isCollapsed = grid.classList.toggle('collapsed');
     btn.classList.toggle('collapsed', isCollapsed);
     localStorage.setItem('collapsed-' + gridId, isCollapsed);
   };
 
-  GRIDS.forEach(id => {
+  GRIDS.forEach(function (id) {
     if (localStorage.getItem('collapsed-' + id) === 'true') {
-      const grid = document.getElementById(id);
-      const btn  = document.getElementById('btn-' + id);
+      var grid = document.getElementById(id);
+      var btn  = document.getElementById('btn-' + id);
       if (grid) grid.classList.add('collapsed');
       if (btn)  btn.classList.add('collapsed');
     }
   });
 
   // ── Drag & drop ──
-  let dragSrc = null;
+  var dragSrc = null;
+
+  function initCardDrag(card) {
+    card.draggable = true;
+
+    card.addEventListener('dragstart', function (e) {
+      dragSrc = this;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', this.dataset.id);
+    });
+
+    card.addEventListener('dragend', function () {
+      this.classList.remove('dragging');
+      document.querySelectorAll('.news-card').forEach(function (c) { c.classList.remove('drag-over'); });
+    });
+
+    card.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (dragSrc && dragSrc !== this && dragSrc.parentNode === this.parentNode) {
+        document.querySelectorAll('.news-card').forEach(function (c) { c.classList.remove('drag-over'); });
+        this.classList.add('drag-over');
+      }
+    });
+
+    card.addEventListener('drop', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.classList.remove('drag-over');
+      if (!dragSrc || dragSrc === this) return;
+      if (dragSrc.parentNode !== this.parentNode) return;
+
+      var parent = this.parentNode;
+      var cards  = Array.from(parent.children);
+      var srcIdx = cards.indexOf(dragSrc);
+      var tgtIdx = cards.indexOf(this);
+
+      if (srcIdx < tgtIdx) {
+        parent.insertBefore(dragSrc, this.nextSibling);
+      } else {
+        parent.insertBefore(dragSrc, this);
+      }
+
+      var order = Array.from(parent.children).map(function (c) { return c.dataset.id; });
+      localStorage.setItem('order-' + parent.id, JSON.stringify(order));
+    });
+
+    card.addEventListener('click', function (e) {
+      if (deleteMode) { e.preventDefault(); return; }
+      if (dragSrc)    { e.preventDefault(); dragSrc = null; }
+    });
+  }
 
   function initDrag(grid) {
-    // Restore saved order
-    const saved = localStorage.getItem('order-' + grid.id);
+    var saved = localStorage.getItem('order-' + grid.id);
     if (saved) {
       try {
-        const ids = JSON.parse(saved);
-        ids.forEach(id => {
-          const card = grid.querySelector('[data-id="' + id + '"]');
+        JSON.parse(saved).forEach(function (id) {
+          var card = grid.querySelector('[data-id="' + id + '"]');
           if (card) grid.appendChild(card);
         });
       } catch (e) {}
     }
-
-    grid.querySelectorAll('.news-card').forEach(card => {
-      card.draggable = true;
-
-      card.addEventListener('dragstart', function (e) {
-        dragSrc = this;
-        this.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        // allow click-through after drag
-        e.dataTransfer.setData('text/plain', this.dataset.id);
-      });
-
-      card.addEventListener('dragend', function () {
-        this.classList.remove('dragging');
-        document.querySelectorAll('.news-card').forEach(c => c.classList.remove('drag-over'));
-      });
-
-      card.addEventListener('dragover', function (e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        if (dragSrc && dragSrc !== this && dragSrc.parentNode === this.parentNode) {
-          document.querySelectorAll('.news-card').forEach(c => c.classList.remove('drag-over'));
-          this.classList.add('drag-over');
-        }
-      });
-
-      card.addEventListener('drop', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.remove('drag-over');
-        if (!dragSrc || dragSrc === this) return;
-        if (dragSrc.parentNode !== this.parentNode) return;
-
-        const parent = this.parentNode;
-        const cards  = [...parent.children];
-        const srcIdx = cards.indexOf(dragSrc);
-        const tgtIdx = cards.indexOf(this);
-
-        if (srcIdx < tgtIdx) {
-          parent.insertBefore(dragSrc, this.nextSibling);
-        } else {
-          parent.insertBefore(dragSrc, this);
-        }
-
-        // Save new order
-        const order = [...parent.children].map(c => c.dataset.id);
-        localStorage.setItem('order-' + parent.id, JSON.stringify(order));
-      });
-
-      // Prevent drag from triggering link navigation
-      card.addEventListener('click', function (e) {
-        if (dragSrc) { e.preventDefault(); dragSrc = null; }
-      });
-    });
+    grid.querySelectorAll('.news-card').forEach(function (card) { initCardDrag(card); });
   }
 
-  GRIDS.forEach(id => {
-    const grid = document.getElementById(id);
+  GRIDS.forEach(function (id) {
+    var grid = document.getElementById(id);
     if (grid) initDrag(grid);
   });
 })();
