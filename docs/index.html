@@ -843,6 +843,45 @@ line-height: 1.4;
 pointer-events: none;
 }
 
+.gear-toggle {
+position: relative;
+display: inline-block;
+width: 36px;
+height: 20px;
+cursor: pointer;
+flex-shrink: 0;
+}
+.gear-toggle input {
+opacity: 0;
+width: 0;
+height: 0;
+position: absolute;
+}
+.gear-toggle-slider {
+position: absolute;
+inset: 0;
+background: var(--border);
+border-radius: 20px;
+transition: background 0.2s;
+}
+.gear-toggle-slider::before {
+content: '';
+position: absolute;
+width: 14px;
+height: 14px;
+left: 3px;
+top: 3px;
+background: #e0e0e0;
+border-radius: 50%;
+transition: transform 0.2s;
+}
+.gear-toggle input:checked + .gear-toggle-slider {
+background: #5b8dee;
+}
+.gear-toggle input:checked + .gear-toggle-slider::before {
+transform: translateX(16px);
+}
+
 .delete-overlay {
 display: none;
 position: absolute;
@@ -907,6 +946,16 @@ background: #c73050;
         </div>
 
         <hr class="gear-divider">
+        <div class="gear-section-title">Verhalten</div>
+        <div class="gear-row">
+          <label style="min-width:unset;flex:1">Neuer Tab</label>
+          <label class="gear-toggle">
+            <input type="checkbox" id="gear-new-tab" onchange="setNewTab(this.checked)">
+            <span class="gear-toggle-slider"></span>
+          </label>
+        </div>
+
+        <hr class="gear-divider">
         <div class="gear-section-title">Karte hinzufügen</div>
         <select id="gear-section">
           <option value="grid-de">Deutsch</option>
@@ -946,27 +995,27 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-de">▾</button>
   </div>
   <div class="news-grid" id="grid-de">
-    <a class="news-card" data-id="tagesschau" href="https://www.tagesschau.de" target="_blank">
+    <a class="news-card" data-id="tagesschau" href="https://www.tagesschau.de">
       <img role="img" aria-label src="data:image/png;base64,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" alt>
       <span class="name">Tagesschau</span>
       <span class="desc">Öffentlich-rechtliche Nachrichten</span>
     </a>
-    <a class="news-card" data-id="zeit" href="https://www.zeit.de" target="_blank">
+    <a class="news-card" data-id="zeit" href="https://www.zeit.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAIVBMVEVHcEwkJCQjIyMlJSUjIyMkJCQkJCQkJCQkJCQkJCQlJSVuuqjpAAAACnRSTlMAsjf0G5NS4XHKcQ0F4gAAAZBJREFUWIXtV12TwyAIVEH8+P8/+CqkjZejkJiX3s3tQ6fjKCDLbpIQ/vGJwBI92AFq99DsAtphOwjk7/gtaAZIc6pMlASNT3J12b5BlLMl07xKY43CCAP2+SBl06HM8liMEqba56u6h1eRgzsUjCKBjotY+OocJtnnSSUpcgcT+B18bFVIQrnWCANOAaj2mCkUfp0Ohtx/3P9FYTxBYVIzAPe+ShingKIsbhSCK4JRrDLlW++zhFlAZgoRTsyQirSLwFHhG8TzFKrYplcmYQWTCj0KVeTzKlSxqXCdwgsq1AuYVLhUwAUVqrhgpDr67mNLFF4wUhW3VRh3FS5R+PtVeMFIVXDvww0V3qWwsYWvqzDtKlyjUAowfMx5wtZphvTzTl2TCtVUCHZjXCNtNjPc+/qcBDWBPRqekWZnNicfa1ql2ZvNyUi1RNETR5UXqaK/TVBxDbYbKkRurM3hpMLDPqTnS7TF4TsKU42vjwCzhfwMiZzq9dlSoH+DpYPUfVgtxAY2XIdNHojqkj/8dXwBmSgalWcG2ZgAAAAASUVORK5CYII=" alt>
       <span class="name">ZEIT Online</span>
       <span class="desc">Qualitätspresse &amp; Hintergründe</span>
     </a>
-    <a class="news-card" data-id="taz" href="https://www.taz.de" target="_blank">
+    <a class="news-card" data-id="taz" href="https://www.taz.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAdVBMVEXVDS7////UACDUACXVACnVBCvUAB7UACLTABr47O3SAAz9/PzTABLPAAD79/j68/T35ujYSFjqvMHcdIDWQlTlnaTmqbDikJjUO07TL0XdgInTIzvqtrvTFTPvys7mmZ/bYGz019rXT17abXnZWGffh5HaZnJMu5A3AAACl0lEQVRYhe1WW5uqMAxs6S1glatiBREW5P//xC234vFQFPdxd56QzxmSTJoGoT/8JjjwIzrdp9GP+OcDTp2P6YwShX3Btn+X9HRAoZLJmW7+rggvWkFkx+Dg54hs5l8LfHMQlC7uEHhbBfgJVxKRBo9opxDIm7Ug5enKGNlNApMJsiyuryQIcOGB9BjiEX4ScFJcyHU6k1+aFpyOF4FYZQTug4DnY/1+lX/NJ05IYY4gpIgRToiqX/jpzR/NQVzMj72uXn2rleetV4C0hqJdYNfx0Q+JOHfSbpWvB8CPs0AEDI18JUg4NAQ+ZKshaPsNSjIKHELB2MjfIFARNKYQA5rL+UrApLDLdLlJEwVBrI3fG91gvY/o1/THtre7c043Mb8ZgYKv8Y2NQaIbhwqQstd5aMn2xblk2a0o0gYRykHFXQIdQRQmgJezkXEpddyQpNVQ+IY8RqArw1/0op5gAIn5ZJ80KcfKJgTJvFlTEA5T9WlOWeOsQ4CLPti7XBEEMS7tAmQfRzv8hIjrgjpSKQkUQY5du5HQ+M/sHjXvU9OmcBng2DrgebtI17H3M1lcouooaWb1sbs+LOjmERwHG+0FgMLG7wRYNqRXWwcSbaz8rv34OFzsrfw4Cp7g6/EoguHZtZ5GWVkF9LXimfyUrQhwsgpUksTm2VrD+SQvCMzhpfbjbA8h8MxAcdeueX78r40H+HSa9n62ehR5kt5vSwqxHEx07W041sFxvKV2ykF2r93zG2sCVUsHSl8R9zxVb60ZcF8QUIw54Ly55sgFN/bvUSeF9rkO0cY1k3B2/kej3L5jOeUDv9i8Ymk82LlLNi+JGjQLJv7ls0WbJMPFUn19uqiTLHfdvJWbC2hAwfPgc/offhG+AcNbIqQHMTQGAAAAAElFTkSuQmCC" alt>
       <span class="name">taz</span>
       <span class="desc">Unabhängige linke Tageszeitung</span>
     </a>
-    <a class="news-card" data-id="heise" href="https://www.heise.de" target="_blank">
+    <a class="news-card" data-id="heise" href="https://www.heise.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAWlBMVEVHcEwUMVsUMVsUMVsUMVsUMVsUMVsUMVsUMVsUMVsUMVsUMVsUMVv///8EKlcAIVIAGk/t7/IAEEvh5OmiqrjQ1Nu6v8oqQmdbaoWKlKZ4hJlHWXj3+ftHcEz1AeyJAAAAHnRSTlMAfmq7UQProR82g83//////////////////////wAfd51ZAAACf0lEQVRYhaVX6ZqCMAwU5KjSi1NZeP/n3BZUkjRF/Mj6izbZaTKTppdL1ESW3ktn9zQT8V0RuyWVRFYlt+PeIikkY0VyDIgoOe/Vyu8h8h33JUS+757tu3vL9vyv3/2lvEZBCDZ3oRWRTNyOuXvjSpr/4M9G+MmfiSAiG02jdWOYBZKHnM+fNmOrVN1pHSwVuBax+jl3b/UjjHCF/hH+2F69rGVOARiV8/76qT72F0KQ2yEi/G/aLUBvw/XySwUgAFU3zA7xBUAPArRcgHIfwAT81cBx4QUh4QPYAQaYmCRKmSwBIhx6QH8uh86KHRFgAE8WwCqJyAnkDFPIA1jPULErpoMAOBotVrkA/IqGAFgSrBYrohkhgJGt4WIioiNbA/857u8UlbIH+IMAup0A6eXOfYYyUvMa01j3F+y8s0JAMlKdr6GZhrbuR0PLUbIBkIyU70bNq6pBa2IDEBlZWJTZHghgAwAymtGSSSIDANCSdMeEKWOoYwtpiTenIZGIjhtKS4nSmIVUxjLyOjaQluQIghET9Pet0CBaEl2EcraBjg2kpcL+VdhQDNKxDWhJi0BbWqhjpAv1wP/uFjTVBulYUwADJmIRtPUwYaEuyAlwT8Is9l8QKwiA990G5IBaoU8Ybi3kennfriISYPkAA9Dr5TPmbBAg6Ra8KIdPHgAcMCCP14SB9kqvl23AACOypgkDdSEA0ND8GbL09MpC/6bch9sjBoCGLDDm6UfnQrR/G2Xt09V2HibCITJyb5XQbrZ0P7BXW+t/OAF04P5tVD4/LJ8d1yMvuLMPjvNPnkt0aIa29+hyGE4++5ZMnHt4LiHOPX0XO/f4fgM59Pz/ByWunjaqpUPeAAAAAElFTkSuQmCC" alt>
       <span class="name">Heise Online</span>
       <span class="desc">IT, Tech &amp; Wissenschaft</span>
     </a>
-    <a class="news-card" data-id="spiegel" href="https://www.spiegel.de" target="_blank">
+    <a class="news-card" data-id="spiegel" href="https://www.spiegel.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAD4klEQVR4nO2bzU9cZRTGf+fe4UOoiGUAy4cmptHETxZNY9NdYWFdkFgXNKMxkcSKqX+BC61Nl924EjVxQ4LMoiEhMakGMDHRhd3QaFwoiQkFlBkQCnQodO49LhixNcOUhNP7Mt75LSaZmTfPed4nc977zv0QijDXk2wU5ayK9AraBbSA+MXGHlw0ADKqTIGMIQy3j2dX/ztK7n4z2530BAZEuAjSFJnXCFDIonpBYbBjYjH85/OdAP7oSdap8oWK9ElxjbJHt1/TgtffNp7JQSGA2e6k5wnDIH0O/UWGomlVUh0Ti6EHIDCgMZn8NtInMAAgcz3JBpBpgWbXtqJEYQn0qIeSitvkAQSaUM56QK9rMw7p9YAu1y6cIdLlCbS49uEKgZYEYrvDk4cfpe50iurnXkIeqt+/YJAnf2OajW9HufPLtf3r3Ysv8z3NaqWWePIZDl8cwm/ttJLcQcOAW6Ofs/bZRxAGZrqemVJVDY3vf/pAJg8gnk/9mXeo633LVNcsgNrj3VQ98bSVXFFEhPrXBsC361qzABJHX7CSKonf3IbXaLdtMQtAqqqtpErX8RNIwq6W3RpQpiSiLJb7Jo2ur5Qc47d2UnvylYgcRRzA+pcfE8xOlxxTc+xUpAHEvgUqAbg24JrYBxDpIrgXgpUst3+4WnKMbubM6h24APLTP7H84ZuR1Yt9C8Q+gEhboP7VtwlXl/etc+vKJ+j6TQNHUQdg9F9+4+owgVEAsW+BSgCuDbimEoBrA64xOwoECzNs/fzjvnX8I4/jNz1m4GhvmF4XsKDh3UvUnzlXckzmjWMECzMm9WLfArEPwGwNqHr2OFVP7X6hWXOrbHw9YlXODLMAak+8zKG+93b9Pv/nzIEMIPYtUAnAtQHXVAJwbcA1sQ8gsjNCUl1D9Ysn7zvOaz4SgZt/iSwA/3ArTZdHoyq3Z2LfAmYBaH7LSqp0HVXQ8P4D94hZAHd+u24lVRJdWya4uWSmZxbA5rVJ8jO/WsntSu6rIdjcMNOzWwO2Nlm+dI78wg0zybvRMGRj4gprQ5dNdc3PCMmhR6g7/TrVz58wulU2ID//O7e/G2Pr+vegtiewZL47mbe+X7h80MBTyLi24QqFjIcw5dqIM1SmPJQx1z4cMuYBI6pqd2AtE1TJogx77ROLK8AHary6HmQKM73QPpld9QBCDQeBtENP0aKaDkUHobAR6pz8K1SlX1XT/+dfggKqmhahv3N8+/nhnZ1gx+RiLtQwBZxXJevK5INCVZdQPR8KqbbxxZ377Io+Jz13KtmAkGL7mcIugZay2yypBgoZhKnCkW6ksN7dw98/rjKIkapNDwAAAABJRU5ErkJggg==" alt>
       <span class="name">Der Spiegel</span>
       <span class="desc">Nachrichten &amp; Investigativjournalismus</span>
@@ -981,27 +1030,27 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-en">▾</button>
   </div>
   <div class="news-grid" id="grid-en">
-    <a class="news-card" data-id="guardian" href="https://www.theguardian.com" target="_blank">
+    <a class="news-card" data-id="guardian" href="https://www.theguardian.com">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAclBMVEUFKWL///8AJ2EAIV4AAFNUaI3q7fEAI2AAHVwAFFkAJWAADVcAElgAH10AGlsAEFjByNQAF1qeqLvh5u3R1+Hc4Oi0vc05Un/z9fgbOW0ABVUxTHx2hKC0uca5v8wLLWQnRHaRm7BseplJXISFkqunsMFBCqI9AAACVklEQVRYhe2X2YKrIAyGIS7gRsWttnXq/v6vOLZqhQpWZ87FuZhcVeD/DEnAFKE/+8/Npdxx2E/F/OrdiujrHpXDg+lROCSnZlUneLD4XiNkWDgsiEf2qoH6zVONY4s/tgBlOjxk7U4EOTXpU45DRMch4zY+t577Wc+rEE9697WcFc+RvAfjk/t+Y096uxI8NrNxMK0++HDq8GwNF8E0nrDbcXDqlz4NpMQZ52kctvIpvB83TD23BXCKRW+vKmcKwwbAOOcL4Mt5nx6rYQsQhIseW8FqnrbbACZsAOOrYgXvtgAAsaBPVADE7hsAKjnQr0LwMHd4iRZgJiKgoMpFRtvr9O5N1ONWU3BE6dnDWC0B0LH7YzAvlADmUT0yc1FvHwZAKTmgzuKWkbMECL2jgMCSANnpKIA2vwVIdYh7/7eApV7AXNn6oK4A2csDuNi5LVveKAiBLgbgFqFUIjjPKkWZklaXRqBOVQtTXeWobna46AsJqJBj29ccM7mUY6mUDRFANMds6zDJALUe8VoCGKAFaDx4i+KZHAWgq3in4oYeBrBOBESOFqDRP0pOAEjneZ8HyJFcMOEwAFCqieJOABILDkdcB9DqEfLrZWEstAd7PUBwipaVwud5NwABz5Y8sB8AhiatX1ygKkD+odmEpc1Ky/nci4DiU6OITtaczZ7DOyBtd9y21K3zOZVEAuQ1Ud2nim2UEyK8OIzMgDy6+Hu/2cDN5j4iOmsEJB3xd3TaC4J65q3o70mSlcg9d2Cywx3D8I/H4YwFz1/H1bMnm63xn/0b+wbMTx4wuMeOXQAAAABJRU5ErkJggg==" alt>
       <span class="name">The Guardian</span>
       <span class="desc">Progressive British journalism</span>
     </a>
-    <a class="news-card" data-id="bbc" href="https://www.bbc.com/news" target="_blank">
+    <a class="news-card" data-id="bbc" href="https://www.bbc.com/news">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAG1BMVEX///8AAACGhob7+/vi4uKCgoJ9fX3u7u65ubnCLIgNAAAATklEQVRYhe3TMQ6AMAxDUZM2be9/4o4YMaAKKpb/NkuJp0QCAGCLMK1LI8+cQ+rNJ+775XBVSs8p1ctAeS4Iz0EBBX8VrJ7y62cCAOALE2VzA52Uo1HbAAAAAElFTkSuQmCC" alt>
       <span class="name">BBC News</span>
       <span class="desc">International public broadcaster</span>
     </a>
-    <a class="news-card" data-id="nyt" href="https://www.nytimes.com" target="_blank">
+    <a class="news-card" data-id="nyt" href="https://www.nytimes.com">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAdVBMVEXr6+sRERH19fX09PTs7Ozw8PDx8fHt7e329vbz8/Pv7+/y8vLu7u4AAADq6uoJCQk2Njaenp7j4+OSkpLU1NT8/PyIiIh9fX0sLCxQUFCysrLAwMC5ublqampjY2NxcXGpqalFRUXKysofHx9ZWVk+Pj4YGBgBebQzAAADMUlEQVRYhe2W25KqOhCGJZGQEJpADoB4Qhx8/0dcDaJLAw5UebH3xfrLCyvT/c2fTqfjhn+pzX8PIF/qHwAB9EutBHDXi6wHkOGMnwm8Lcpq16R8JYA7bVE6dQ8GOrAVdHu3CsB1kQHqdinrtPchBH6cwaX9xMNG+KIuB1ABSvWUUx27geEKCFS1pV74FID/aUgfNTBs6NzhhsvQ8CUAbyHwBHDNLp3qsVC6BQCNfyYA3IxSd1fLAKJn8l/MFEsAvof7xgHeSvEAHLj0APJNjBwQAJe8bsyxmjCg8+Kl9BeohQBOKcdWFNqeO/XKULCnbAEg00qBJYxJHu9Lo1vTBc+2CGru508BxECgheQsr6Amom/r+nwbalLaaf4UwFwJteM5erdYMC4PR2xnYUvtuJjmyw2biLZle8Kb0HLJdZNBpWXIuOFhOI1lbAbAeFthJXMntOlAqUwzFhJD5tJnAcReMX8X2TLoq4cAyXoHawFCQ98Kp7IxQ1M+AG4lQPLdkLeXeK2fACnOdt7CJvREmqGXT/jtCWAiLeGGTeQHo3wAS7vh2hYkpk8A1SccJqohKwC0HrIgfwXoDIZO7I9yCcCPd0BNX7ZQwjhYrFwCMD3sAK+teAHQoj9PyKxYdCDtVU0dMJmDgp2lczWI3yTHiQiGvtQgjGkDP1piQBh78gDMPmafeAPE3MSsz09z8Svg4UBlafgGoIb0f6f1mS84qEYLrfQAtDew7QryKyDUl7EIp9EBwC59AriB2t9C8i5+Hsc6ThUEAFzqbYjrwtAkIXuAlr0n+ABZjwB1sw3AuXUyTgaAiHFiQ6fD3wGxzsYxrK5ng6NkXBfGpdhOcCbJ74BE5o+nSUFhQ8qG0ghuDn114CCXAPGmer4EEBxzm27SrW3Kqh8zqktjHxD5Yu3ft0TBU+MVkX74FBDhHZh5Fe9nSyfRM4CImXkCXHS8CpCwJph55OFiw2nwHCCKhO3AQyg4ajYTOg+IsGl2f38h9LXMDjSZi9xsPyhMbPFzvZ/AbVfuk3A+7iNgG8Uitbat6wP+5JRh9CHsM6BnYF/h1EqST9lLgDX6HvBP/welX+prwB9mZXYAxUkIAAAAAABJRU5ErkJggg==" alt>
       <span class="name">New York Times</span>
       <span class="desc">U.S. newspaper of record</span>
     </a>
-    <a class="news-card" data-id="atlantic" href="https://www.theatlantic.com" target="_blank">
+    <a class="news-card" data-id="atlantic" href="https://www.theatlantic.com">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAM1BMVEX/////9fbuW1/rRUnnAQj84uPqKzH////////nEhn5xMX71db2qavxgILzjZD0mp3vbG8xVy2XAAAACHRSTlPG////////mc3S3u8AAAHiSURBVFiF7dbbbsMgDAbgAobFnJL3f9qRYlBJsbMm0q7qq06qvoU/2O5juVePxxf4ByD4W4DyuN0BbELQ9gYQAdGJZzgBcgEgXges3oGsLgPBIZ6EIAO+PEAJIVwF1PoEQEpRBnQF1quAxWeBFlIUgQBVcEKKIpAJACFFETANEEIQAUBHIVwDAiQ6BFwDMsRIAJ+iBGjnPZ2B7ycBUM6oUHMEfqgIgEe9qK0C5gqwQl6WBCdXSQC2vYlivQnIhsADZZgomgjlDOlzwLv94OosRR6I9b9SRxsuBB7IdY7QXWRHMwvUCNpU4/uJBUK5Rs8PBCRmqLCAb8G3hmRC4IAyT+nUmxwCC2ytA1tDfghY116cJYDZTxwQempKDoED1j4CWkMy/cQBGvuZVzEEDnh54iBeJQYI4HQrGu7MaGaADM70crQdpq+BATRG1crSVJrvJwZA8/LtKIUwB8KwkL20n+bAOoyw0Hbk34Ft2CR0leYhTAFlcPhu25Cz0TwFvHPD3zTbp5N1CkQc85JSnAJp30kvRbN9eLcSUFI/nFYDu5/eARU2GH+XKdvbIbxd5yOgYnL772O9xjZQfG73oOyXdHyII2CNq9XfutLoXur4a+ftCWyvbo51msGH9QV24Gb9/ALEYXoC1ioW7QAAAABJRU5ErkJggg==" alt>
       <span class="name">The Atlantic</span>
       <span class="desc">Ideas, politics &amp; culture</span>
     </a>
-    <a class="news-card" data-id="ars" href="https://arstechnica.com" target="_blank">
+    <a class="news-card" data-id="ars" href="https://arstechnica.com">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAASFBMVEVHcEzwUSPwUSPwUSPwUSPwUSPwUSPwUSPwUSPwUSP////vQwHwTh3wSRL6yL383tfxYDj+8u70iG/xWCvvPAD2nIjzclH4tKUXXGAaAAAACnRSTlMASPf/brwwFdiQxZMgQgAAAmlJREFUWIXdV9uWqyAM7RTbqiSAF+T//3RIAPHW1pbzciZrjR2I2SQ7CcLl8tfl4eVb06qpr4LlWjfVhzCPphYbqZvzGPfb1jrI7X5u9SfmDHHCi+q5OUn1bvld7DsuXjpxf2dO8oKJnzP2QvwU2j9FOOX/iyge5+2FOGLyLf9Lqff2b/K/lV09fBQAyTaIF/V7LLevM5DkXubAxoWPGSBZstDEOUAp0f9JCGM/8k+M46jEqGx2NQBycrpr27ZThgzFoFSPIK1uDQgAp0mn3cTKZS2ECGAi4yi9fwlM26px0DwE062UqxhCEdH7tAI70cYJLXnkkH+9kkZTCKLaUoCttoMnYLT+JYsM0HmLzvUGJlp59NrJtTsSUhsMkaDRWzkZXWoVeg7Rg+oxMDXE1zMJ15QEfgCOypslAMdm2HtPRlzl8ToD5DmQUkzWdRlAjUFD/3c9zEkk2ZUR5TFxnQBMKgnF09oZOUM8NgBodM5jAhjS66iiRk94DMBEE+XDkoMZQEiT3It1sAXgTPdUqvIQgCrbWHYS1gCBROipRDDFewRAzTL22YV1GnOmxVEIkAInpcV1GrmQ0EUA4ErcAMBkF1UWAHIhcSkjh+CLddIHWfD+hTqXdm6GXMqhmZBIDK20DyGUQWwmLXkuN1NIA7sQ0jTsQ+hzN+ttElI3oVGdX8QCglIUpt9QVOoc5N2m67Tqw/qrj0vsZ6AYeRcLT/8jlymUs35NwT/YVIu39fIPS/GnrfzjWvx5Lz9glB9xig9Z5ce88oNm+VG3/LB9KT7uX8ovHJfiKw97UXbpChhF174M8/3F8/+RX2oaOnAuHnubAAAAAElFTkSuQmCC" alt>
       <span class="name">Ars Technica</span>
       <span class="desc">Tech, science &amp; policy</span>
@@ -1016,27 +1065,27 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-sci">▾</button>
   </div>
   <div class="news-grid" id="grid-sci">
-    <a class="news-card" data-id="nature" href="https://www.nature.com/news" target="_blank">
-      <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAATlBMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD////n5+fT09MxMTGJiYmOjo6YmJi8vLxPT0/09PRtbW2oqKghISGiEhN+AAAADHRSTlMA0rZK5WJ4FJD5qzc35ZrKAAAB8ElEQVRYhaVX2ZbDIAhNJtZsmqbN2v//0UnaVBTR6uE+ZRy4BUSWogigrmRXilapVpSdrOqQHI2+EQpBNH2qdi097YtDJtnRtLT6gbZtfqrfwuofjlvc+jKufqKM+HH7rX4iaESTpq9UIBJ/qfpK/TH1SYYsfYIh2f8vUBwS42/DuYs6X18pOx/I/HmZj2Xblpf3/zLqwDjd9edrH/QbwxR2Auf/Nq+nyvn51IB1ccVa8gaW46cvHH/N2saK/LhuonYM2EEe62s9IxM+cZTu6QoED42BTJBvAlR/JiBYPYLNlRWnfo8iOBrpSa/7tiyb5dWOhHsqiQcj/rhOXsYUFIR3GL0KaiL39N26I1lBZfGEDTjuNkRw5HPlETx9gjFIUOFLzCWQRccj6IiHmEVQ+peQRyC8l5hJ0Baefh6B4hOwXWAHkX2N7ERip3LkMcFzjj2myHOGRhAmqImCkkMgqJK2+wSmoAxItiGKKpQ0qKCGYEWyPVHWKYLte6R9D7zGAlV5JgjcziKJ1ma1JogYNBunv16tDYURGgs4DD3yYYuaMccxAczVo+eV01lMe3cHjGkwMJ0QjuxEsKakhBHZhzXi8Ics9pjHHzT5oy5/2OaP+/yFg7/y8Jeugr32vSMRoUhYPAv+6nuCt3xfdiSu//8FKZxtayUOKgAAAABJRU5ErkJggg==" alt>
+    <a class="news-card" data-id="nature" href="https://www.nature.com/news">
+      <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAS1BMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///+Ojo7n5+fT09MxMTG6urqfn59PT0/09PRra2shISF+fn46JhgGAAAADHRSTlMA0hh4smIK+ZDlSjcbp4U+AAAB5UlEQVRYhaVX7RaCIAxVsQQFzc96/yctLRiMaXB2fxnt3sPG2EZRnKBqRV2qRutGlbVoqzM7Gp1UGkHJLpV9FxH7pyHuKXTZ0PQdjfwrcbugHxK3S3pVXtN3lBfxvP2n7zjdhEzjay1pfp3K17pm8kmFLD6hkOy/BYpDYvx9BGdR5fO19vOBzJ+n+1i2bXlG/5eXDozzw3y/5sEcGOZTJ+44/7dp3Sn7Z28A6xKaNfZmBSew9A9L+PyajI8V+SGpDXgUzDdmIrcgwtUVBF4GA21BHAKo/oDXnpbFFtqqnd+hCI7Oejbr9FqWbQYBfBIdlcSDM+9/K0+3FRSEI4xRBZ0w33PrgWwVlcVzLLCcCXzyuY0E+lhgPBVo8SHmCgiikGQJ1MRFzBIo40PIE1BF3ImyBJoi4ucJaL4A2wV2ENnHyE4kdiqzL1N8nbMEKqKgEPXgVEBRJc0JQAF0BWVAtpIoqlDSCIEV2XZEWQcBqKCbXTKxB1FjgaoMAtBhws4iyN7qajhEDDpD0F9tdw3DCI0FHIYe+fJN7ZgTbgH8NWPkVdBZXHsPB4x5cHCdEJb8RPCmpIQROYY34vCHLPaYxx80+aMuf9jmj/v8Bwf/ycN/dBXsZ1/Bf3gW7KfvAd7j+4vU5/8bY+ib2he8lwIAAAAASUVORK5CYII=" alt>
       <span class="name">Nature</span>
       <span class="desc">Multidisciplinary science journal</span>
     </a>
-    <a class="news-card" data-id="science" href="https://www.science.org/news" target="_blank">
+    <a class="news-card" data-id="science" href="https://www.science.org/news">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAANlBMVEXVAA7////eM0bXBBv30NTbIDX+9/fkW2nsh5L87u/maHbZESf64OPiSlrpeIPvmaLzt73wqbAf5WtrAAAB4UlEQVRYhe2W2ZKEIAxFJawii/3/PztsOopQBKfmre9LV6M5hiQkLMtX/6rNaue03c7/ADPWjpEipnhaCgvbwOoUVSKaGiMyYw/fduGXI+3BxA9Lmvbh14jwIPAAiCaqdoegAfxuf3gUhYoijdFj97XNTABisIhteYUD0PiqoPWyJC1uS+lN9lzfsYC9A+ACCVg7gMWHdTm239Je18YTjgPwfsWEzekxADLANR5ZFKB4YB55XGJ4WtxKtBStajzzGEDOAml6CwwRxFwHPR8w0geA7Nj2cRc9Dz8RqhXKoRT51arQXfDigrkQiPjMtOIsEOQmpmd3YitC2MkkAgypEW4OQX1NIGYyFtzX+5iurE2tFeEzSQj9kf2VsMB9J4h+8BB1l5Ssr2p7kb8ITENoefE5q/Id4HLCRoeL604TOPrMqJw08e0HW8nGqKnpbqA9LpGy+w1AA3qBFqgthOnTG8G5GEbz2fZzzVBptH03E8AM7HOomoMxj6xhT8ixbtVCvjgMZw10y0XiGkKZ7uJZsTEEYjzs+HHwa4JE9pMDQMT95XR97hyTm1Kocsb3ixMSa58AhpbBsmsICaWg2dOlnmip1rMfi3KMP8jLAj1TBYqdDdmol3cNkE4pZ1/cEb6a0Q+3ZQsp6wfnpQAAAABJRU5ErkJggg==" alt>
       <span class="name">Science</span>
       <span class="desc">AAAS flagship journal</span>
     </a>
-    <a class="news-card" data-id="quanta" href="https://www.quantamagazine.org" target="_blank">
+    <a class="news-card" data-id="quanta" href="https://www.quantamagazine.org">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAdVBMVEX/gwD/////ggD/gAD/fgD/fAD/eQD/r3v/4sv/6df/3cD/hQD/pl//n1H/rWv/2Ln/tXz/kCz/+vP/8ur/x6D/59H/7+D/0a7///v/wJD/hxP/zKT/u4X/mUD/q2P/nEn/rnP/wJn/kjf/jB//lzb/zK7/lEE5OaJ3AAACcElEQVRYhe1W2ZaiQAwllYQBBdmUxZZ2wfb/P3FSzgBVtkL18DbH+0ad5CbcylKe98Ybz4H4s/NvdlH21BKzmFz8eQv5aEgDl1oDpC4M1EDuD1E3Ue/jTOBhvFd9Nh8Ah94Js9bJXyx7f49DgISHc0cRDdAn1Mefu5kM6h/CWlDzJtP+RIsosGvSJUmofQ5QOt7dHzCz8UUpCGJDRsU8yUfbfDcyoH/QBO1IoNZhfZpgUJ3Yb7APlgVFYBaSBDgD5GpCFCqg7pSE9omoylPm6+1vQPIZPTwCrPi1v5R7ehGzS1mkp6La01i+2BRBhx7FM7eipH2VEu2hvLJhSVqNUsjQoS7wqqX7sjLllT7bu5WEwlqMI6sHZEgAhFN/b6XQFvnhwRi3ebCf6isrOT4F/qMBk6mJpPkQoDPLg34FM9kqZQ9e0ciql1kC3sHWNPFDKI2k5wkotwsKs/PNSGmeAI9b+06RzF8Sgm8iot2GkwWlvK8ie+g5iqvHm30NKgHqi6UyRlJIletauJfy2S7lRJ+5TDdp9vtUgMA3VfV3+uzmq6lhoN0xkyi69YKkjHoKpFNe7aBuisrzHsWxQSsoJAZnN/YjGQBMSMRtGB6ZLmv2qqKExmWk6UqXiVhv06L4rOpU5yIbU/l6pE21lCzTelSK8D4FGn+IifHcXXC7NrW7j3VzMqAXz9WoqTK24l/vp9p4BhSFu3bRekbmhet9KSSDZes9WyWOs9zE6MGyGyvnLu5B3lAqep8MBLK1nASlUz2MO9Wtkj4hWe2504uNK4AhazWKqBtlqpEGqC7ZPLXj5sPtvaRevWJo2ZW+8T/jN7XfF4VRhVOjAAAAAElFTkSuQmCC" alt>
       <span class="name">Quanta Magazine</span>
       <span class="desc">Math, physics &amp; biology in depth</span>
     </a>
-    <a class="news-card" data-id="sciam" href="https://www.scientificamerican.com" target="_blank">
+    <a class="news-card" data-id="sciam" href="https://www.scientificamerican.com">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAFY0lEQVRYhc1XXUhTfRx+zr50Q6NAgsCk1YVDVsuI0EioIEiXhNC1kEtEhYLAC0nwooKCRhFCBFogjOz7Yl10EQSZMyNNtLaoxmGC9kHl2tTTlPa8F737teM+fH15ofcHB/4fz//3f87v8xyF5DSAYvwZiSsk+YcuBwCYAMSxzAITExM4d+4cQqEQSkpKsLS0hNraWlitVhw/flyn4MOHD/B6vRgZGYHZbEY0GsWBAwdgNpvR2dmJ27dvw+fzCX7Xrl3o6OjA2rVrASAOkjGmyePHj1lQUMCGhgZqmkaS/Pz5M/fs2UO3250Opd/vZ3FxMT0eDxOJBElSVVU6HA4CYDQaJUlu2bKFAAiAwWAwXUUsg8C2bdsIgP39/brLVFXl4cOHZT48PEyLxcKysjIuLi7qsK9fv6bJZBICW7duFQKRSCQ/AUVRCICHDh1iMpnUKb558yZJMplMcseOHQTA9vZ2ZpODBw/+OwIbNmwQcH19/fID8vYpzOXLl7MSGB8fF7fkI2BYHpXHjh2Tsd/vh8PhQFdXF+bn52X90aNHv6PYZMoa3S6XCxaLJV8CAAAyCHR3d+PEiRNQFAUAoGkazp49C5fLhfHxcQCAqqqC//79+4qXrIqA0WjEpUuXEAgEUFVVJevhcBh1dXWIx+NCDgA+ffr03xJISVVVFQKBAHp7e2G1WgH8yvkHDx6gtLRUcM+ePct6PpFIYHZ2dnUEXrx4gYcPH8pcURR4PB54vV5Zm5qawr59+2T+/PlzhEKhDMX9/f0YGhpakYAuCwYHB9nW1pYR0cFgUKL43r17TCaTusiuqanh3Nyc4CORCDdv3ixr/zgNBwcHWVhYyLdv3+oIXL9+nQDocrmk6IyOjtJms4liu93OtrY2Njc3c926dTx//rycdzqdglNVNT+BiooKbtq0iV1dXbx69SpPnjxJm81Gt9vNjx8/6oiNjIywsrJSlAOgyWRiZ2enFLGhoSEd0YsXL3JhYUEIKCRj+LsZzc3NQVEUKIqCQCCA6elp2Gw27Ny5E3a7PZcLMTo6ilAoBKPRiJqaGmzcuFH2Jycnsbi4qDtTUVGRCuy4jkA2icVisFgsKCwsXDmgVi/xnGmYkvb2dly5ciXr3pkzZ2AwGMRqR44cycDcuXNH9lNZ9e3bt98ALusF6TI7O0ur1Uqn05kLwtLSUhoMBgKg1WplLKZX19DQIPsA+O7dO10Q5rXAjRs3oGkaXr16heHh4awYg8EgdUHTNPj9ftmLRqMYGxuDw+GQteX9IS+B3t5eGff19eXEHT16VMa3bt2S8d27d1FfXw+j0Zj7klwuePnyJffu3cv169cTAIuKihiPxzNwZWVlVFVV2nhBQYF8B+zfv59Pnz5dXTtOf/vm5mY0NjYC+JWiAwMDWbEGg0ECMJFI4P79+5iZmYGqqti9e3fut89lAU3TaLfbubCwoCvD1dXVWS0QiUT45MkTwdXW1tLr9bKjo4PkKr+ISNLn87G1tVXm1dXVomBycjKDwNTUFH/+/CluMJvNLC8v59jY2IoEsrqgr68P79+/R0tLC1paWpBIJHR7y2XNmjU6NywtLQEAKisr85s/mwvC4TCdTifD4bA8wWCQRUVFBMCSkhL51ktZIBV06W7o7u4WzKpccOrUKZ4+fTrD101NTaJkYGAgK4F0N7x58+YfEdC54MePH7h27ZqucKQkvcz29PSkrIf5+XkprSk3bN++HeXl5YJPuQRARmMSC8TjcdbV1REAnU4nfT6f0Pzy5QsbGxt1bdfj8bC1tZUA6Ha7OTExQfJX++3p6ZGzFy5coNFolHNNTU38+vWrWOB/8XM6gz/4e/4X6kYtOKWe4poAAAAASUVORK5CYII=" alt>
       <span class="name">Sci. American</span>
       <span class="desc">Popular science since 1845</span>
     </a>
-    <a class="news-card" data-id="spektrum" href="https://www.spektrum.de" target="_blank">
+    <a class="news-card" data-id="spektrum" href="https://www.spektrum.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAYFBMVEX///88PDw5OTksLCwzMzMpKSk2NjYwMDDU1NQjIyP8/Pzx8fEmJibZ2dmgoKCRkZG7u7tzc3NjY2OJiYni4uJDQ0OamppVVVVLS0urq6vr6+vCwsJqampaWlrLy8t+fn6PNtpSAAABnklEQVRYhe1WR3KEMBAUigSJHBcW/v9Lw0jCy8FlRlU+mb7NoZtJPYiQBw8e/DlSU+ZFU+SlSUPobRNppjjniumuz9D8PuE08qBKxkh+JaILqGhR/NzxOWPKJiIHDD9j9rOyKed85BBoTBETCNAO0k5reUSqQAgsQBGrjQzUI2uEQAR1Uzf+1EbdfX5qKzjbNhwKlCIEIGc6+nhMxI7kvgBR0Pdz9CYGIARGqFpWCMoVjR09w0zuglXbRWQL3kQWb+lWmZZhAq1zwG6iBecij1l4M0tWBN2TlUlvZRWtIQpZfZ4EmmxBSUycn0kMrxCFV/XdiTFsoHOnnALHuPkDaaFdEnoOUyCms+OQ70ABkg02B32/C2kG8KNrGfaq9mL/IfHktEFlT+T9JuTQelb+FP+KCQhqusbsfgYzLDHffGzvC6IHbQIOiPxZ72AMCWKbrQf8v6hR1yN9A5tTWGZjytpuM8sRAraG45ho7e4CpShH9zq6ggqD4RNSaPlJVx32hULWen9byANciZA30n5Oyn5b6rpqpjjooD148L/wBQ/bD6mb17g2AAAAAElFTkSuQmCC" alt>
       <span class="name">Spektrum</span>
       <span class="desc">Wissenschaft auf Deutsch</span>
@@ -1051,37 +1100,37 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-did">▾</button>
   </div>
   <div class="news-grid" id="grid-did">
-    <a class="news-card" data-id="zdm" href="https://link.springer.com/journal/11858" target="_blank">
+    <a class="news-card" data-id="zdm" href="https://link.springer.com/journal/11858">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAgVBMVEXw9/wBMkv////x+P0AL0kmRVsAK0YAHT5YaXf5///0+/9QYnIAJEEAGjtvfosgQVcAID8AEzcVP1Z0hZKWpbDN1tyIl6La4ug/V2mvvMXl7PIADTQuTGGfrbe6xs4ABjK4vsNhcH7l5+kAACaAjpmSnKTX2t3y8/TFys6stLpjd4bGxURzAAAB8UlEQVRYhe3WbXOiMBAAYBK2a9QEAoilBQtyVLT//wdeQoje3Jzt0szN3Qf3C+iQJ5sXyEbRIx7x30W8Xm82cUD7KC92ZWSU+HtKHD1JqVi6PzxHNpXFigGAMQCps7TavbzGSwfkgCmsUjfi8BZtjPINwCkoV22VvJTrNU35HZgCUau2Gt5Kwgr9EXC5yJUGsS+fP1fuA/OAlG4+duXrXeFzwCtZHgJY4ym6J9wAQBMwTyL+8ieQAKyrowlUttVRCAauZyFECgRAFz2f4mR+rOy1ndjE3Ar8GlAH7sN0bQFeyAUAVLZJV+y7sc9cBpxroAPy3TzXKGl28RE90GV0QHfmucwtAPOAbUgFsLA9tjivugF6Q46aPgep7bFPFHqA21k5rMirIIcp6V6oK2BH1UgqwFTixn2uZ2CLFvxBBpiEziWhZ0DZpPYNGTBJpBPR6TmD+mQu7QKAQfbB7dyDA8D2/k4F3PS3ttNmBqb9PRIBFJmSKFvzRo3SA0yPfkN9CeR8PA/JYBM4K+YBFFQAj9eXkedwBVjWEQFo5q8BPzXIbgBD6hCgrraXy2WoMtsOttU2d69W424JywiotZb+Swi34266pe2D0K/y3wNCDpagoy3kcA053q8FBl9eYISUOGFFVmiZF1hoBpe6j3jEv4ufEWwlNXkCQLAAAAAASUVORK5CYII=" alt>
       <span class="name">ZDM</span>
       <span class="desc">Zeitschrift für Didaktik der Mathematik</span>
     </a>
-    <a class="news-card" data-id="jmd" href="https://link.springer.com/journal/13138" target="_blank">
+    <a class="news-card" data-id="jmd" href="https://link.springer.com/journal/13138">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAgVBMVEXw9/wBMkv////x+P0AL0kmRVsAK0YAHT5YaXf5///0+/9QYnIAJEEAGjtvfosgQVcAID8AEzcVP1Z0hZKWpbDN1tyIl6La4ug/V2mvvMXl7PIADTQuTGGfrbe6xs4ABjK4vsNhcH7l5+kAACaAjpmSnKTX2t3y8/TFys6stLpjd4bGxURzAAAB8UlEQVRYhe3WbXOiMBAAYBK2a9QEAoilBQtyVLT//wdeQoje3Jzt0szN3Qf3C+iQJ5sXyEbRIx7x30W8Xm82cUD7KC92ZWSU+HtKHD1JqVi6PzxHNpXFigGAMQCps7TavbzGSwfkgCmsUjfi8BZtjPINwCkoV22VvJTrNU35HZgCUau2Gt5Kwgr9EXC5yJUGsS+fP1fuA/OAlG4+duXrXeFzwCtZHgJY4ym6J9wAQBMwTyL+8ieQAKyrowlUttVRCAauZyFECgRAFz2f4mR+rOy1ndjE3Ar8GlAH7sN0bQFeyAUAVLZJV+y7sc9cBpxroAPy3TzXKGl28RE90GV0QHfmucwtAPOAbUgFsLA9tjivugF6Q46aPgep7bFPFHqA21k5rMirIIcp6V6oK2BH1UgqwFTixn2uZ2CLFvxBBpiEziWhZ0DZpPYNGTBJpBPR6TmD+mQu7QKAQfbB7dyDA8D2/k4F3PS3ttNmBqb9PRIBFJmSKFvzRo3SA0yPfkN9CeR8PA/JYBM4K+YBFFQAj9eXkedwBVjWEQFo5q8BPzXIbgBD6hCgrraXy2WoMtsOttU2d69W424JywiotZb+Swi34266pe2D0K/y3wNCDpagoy3kcA053q8FBl9eYISUOGFFVmiZF1hoBpe6j3jEv4ufEWwlNXkCQLAAAAAASUVORK5CYII=" alt>
       <span class="name">JMD</span>
       <span class="desc">Journal für Mathematik-Didaktik</span>
     </a>
-    <a class="news-card" data-id="mu" href="https://www.mathematik-unterricht.de" target="_blank">
+    <a class="news-card" data-id="mu" href="https://www.mathematik-unterricht.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAANF0lEQVRogdWaeZRU1Z3HP/e+V3tXd9MbDQ1NN0vTsiSACiJogvG4jUQIyRAzOurkhExGY2acE802mUxOZpyYSeaok/FETc6oRMUEIgnHQRFUBgFFVhe2hqYL6H2tqq71vXvnj1dUd3X15oieM99/6lXVXX7f3733t9zfEwyB1toDVAE3AbcAC4BSQAxt+zFDA13AIWAz8BJwXgiRHNwoRyitdSVwN/CXQPUnI+e40QQ8A/xSCNF64ccsAa11BbARWAy4L8aMSmkS/QnSaRtDSjx+Ny63+VGGTAH7gC8IIdohQyCj+d8Dyz7siFppEv1xYn1R2s600nDoNKFj52gJddHdGSVtg41EaQNbSLxBPyWVJUyuncj0SyYxe/5USsqDBIJefH4XQoxrp+4CviSEaBWZPf8D4H4+pOY7zzRzcu+7nD54krNHQ/R0RrCURCGxkNhIbJ35xMDWwvm88B8SLQ3Kq0qZPruSunlVfGpRNTUzyzBNY7SpU8BDwE+E1no6sAOYNl7BY9197H12C+9v30e4O0oqrTJaviC4Meh5KAmZQ2Dwd+lyESwOMOfTVdz6V0uZPqtiNDFCwAqhtb4HeHQ8glupFOcPHuX1R56mvbElVxAkCgPh9mD4vEi3F+FyoQ0XWjiCWrYmZUEipUgkbGIJi5RFHimtBcIQ3LhqAWtuu5xJVcVIOezW+qbQWm8Drh1T613dHHlhC4c3vUIilhykQQNtmJTV1TLpkhlUzJjKhCkVFJYVEyguwO3zIA2J1pBOpolFEoR7onS1h2k9183Zxk5OH28j1NhFMq0HlKEFQghqZpTxhdsu59qb5g1H4lWhte4AykYTPhmJsvvnj3Hq9T2kLZ1deiVNJn16Dotvv4WKGdV4CwOYbtd4FhMArTWpRJpoJMHZxg5e3XyIXTuOYdkCCwlagACf383aO69g7Z1XDD3knUJrrRjFSaX7Y7z180dp2LYzu9TKMPFVTOTyO7/E7OuuwnB9JNOYg9DpDp57Yif732oiHE4BAg0UFHq57x9u5MrPzhpMQguttR5N+COPP8nxTVuy1kObbqo/s4xFd32ZCdOmXDTBByOZSPPOm6f43VN7OfZBa5bE4uUzuP/HNxMs9GbbypEG0UpxdvurhLZuxRAKw7EtzLr+Myy/7+sfm/AAHq+LZZ+r529/eBMz68pBODp+90CIrvZITtsR1z7W0kLTxk0Qj2EgEYbBtBVXc+X99yLkiLxzYFsWqVgSK5nGtm1AIE0Dl9eNx+9BjjHOtBnlrLhhDqHGN0ilIR5L03C8nZqZ5WMTOPviRmJnGjCQIAQVC+ax6O6vjUv4ZDTGmX3vcfa9U7Q3tRDujBCPpVDCwBXwU1hRQuWMKmZeNpva+bUYIzgtIQRl5QX43BLbsrC1JNIXz2kzLIFY6AzNmzdiYIMAd7CQuj//Ir7S0jGFP3fwA9745Xq6Qm3E+lNYWqAyTszSjpc+d7SJ93YeYdemN5m95BJW3buKYEkwbyytobczgp1KcYFiYZE3p00eAa0U5zash2QMAwNQVFy6kIlLFsMocYq2FSe37+L1XzxJLJJwPCvSWcFBsLIdINbTx/6tb3PqyBlu/d5aZi2ciTQG2vd1Rzi85wTYNgYCj8/F9LrynPHyCCRbm+k7sBdDKNAgPR5m3XEnwhg1NqE3dI79v3kWKxrNEdpXVEDhlMm4C4MoLYj0RGlraicRT6OFQ6S3uZ3nH9zA6m+t5lNXzwPAtmxe2bCHhkONjvaFZM78yZSW565UHoHoB4fRvV0YKABKli4lWDt9VOEBTr+8g9j5Zgwc5xMoncCCr9xC7ZWX4vL7sr7CSln090TY/cIODrz8Nsm0M0/P+XaeffB5isvXMXnmZP7wq1fYtmEP2rIxkHi8Jss+V0+w0DcyAW1ZxE9+AImMFg1J1Q03j7p1LqDt0OHMTpd4C4Os+O43qL5i0bBtg2XFrPrO7dQums3Wx16ku6MPBMR7+njqH9czuW4K77z2HsoCQzgeee7CapbfMB8xJJzIIaDi/aRCDY72BXgqJhIYh/YBDHR21QwJUjihwkjxvTQkC25Ygq8owMZ/eYbeLse+d4ZaaQu1g75wfgT1l07jrvtX4g9488fJJRDDam7CQCFRFNTUYPgD4yJQMbceA4UhFFa4j10P/Qf7Hl9Pd2MIbau89spWtJ5o4tyRE6hEIts36zSFwhSa+Utm8NUfrKGiqmTYeXO3UCKO7mxxzCfgrZyE9PqG7TgUtTddR9O27fT3hEFbxNvbOPLMCxxcvxFXsBB/ZSWuggC2FsSiCXpauoiGExkTO8RaCQNfgYc5y+dzyz2fp6i0cMR5c7dQpAcRjyKFACHxlJYhXeOLLgurpzL3jq/w7pNPE4/GBmkF0uEw3eFoNoq1cPyBiTFgVofgmls/y7V3XJ9jVsckYHe3Z7QvUaaBGSwc1wEGkC4X01f+GcHqag795xN0NTQOxLiDw8WM6bSyzxpbgOlxkUopUM52CwS9YwqfR0BHwwP23wDDm39o0Jp0bw9t27fS/MpWYu0dmCXllC+7iqprr2PiogVc9/ijtLxzgKbXdtF5vIFkPEXaUthKYGuBEgaYbsxgkMp5ddRdvZju5g62PvI8OpZ2FDJ8BjY6AawUBgotnFxCDuO80t2dnPrFP9O5900sW2Frg1RPD6dPn6J5+3amrV5DzerVVC1dQtXSJdjpNImeXlLRGFYqjdYgXSZuvx9/aTGmx42yFaHDx9DJJIZwlqZk0thhSx4BKWXWFCpshLbzOnT8cQPhva8jbe2EGpkVQ0PifIjjT/yKeGcnc9atQxgGhstFoKKcwCj5eTwc4ez+9xHKQiLxFwcpm1I+cofBMud88QcyqbnCUBakErmttaZ7ywakSmOgME2Jv6IcT7DA6YOCZIxzWzbTsvMNJxobA1opGnbsofXdY5iZMarn1eKfkB/cjUnAKC7BzPgAaafQ/eGcxiqZQHW3Z222v3Iicx98mEu+/0+UXnoZhnCcmYqGOffyf5OO5CYfQ6Esi5Pb/oe9TzyH1BZSKLx+F/VXLcRb4P/wBOSEcgyXs42knYK+LrAHtpH0eHAXFWa1rfu6iZ8+QcniK6n7uwcorq/P/td76ACJjvYRJ7YSCQ4+9QK7H34SKxrJ9LOpqq+hfsXi8d7Q5Z4B4fFhFJdCZxtoUF3N6FQC4ct4YyEpvuZmul78LWiFHe2l6affo2PrZsquW0nxnLlEThwFW2HF++k+fJDA1Gq0UijLwk4mSUaitO4/xNGNf6L7bCvqQsggBMGJJVz/3XV4xqn9YQmY5ZPRnS2YAmgNoROxAQJAyarbiB1+i3jjSefw2mn6D+wmfOAtlOHG0NrxHRpaXtpC9MwZrFSaZKSf/o5u+s63EI/EUFpkjIAjROmMGq781tcorqoct/B5BPAFMCdXo46+DYA+dwIdi8KEAYvgnlJL5d98n+affYdke+sgJyUyZligM4L1nzxK38kTA3elmYzMCRtkdvKJ8+ZwxX3foGTGuG83hycgvH6MqbMwpQBlY/d1Yp88jFFVO9BISvyXLqP2sT/Q8fSjhN/aSaq3F+KJjGeVgMoJEawhE5lC4Ar48FRUMn3lTcxevXLMhGkk5N0Lqd1/wvrZX2NFw9jaQC5fSeBHzwzfWylSzSFiRw8TO3Wcvv176W84MXABZrqdyxiXF+EPYhaX4J44mcC0Gopmz6Z0/jx8JSXjDleGQ15GJmYtQhYUYUR7QYC97xV0VwuidFJ+bylxT6nBPaWGwqvi2P39JBqOOamiNJj9o5/im1oDUiIME+F2Y3i9mD7//1njeSLkESivwph3RdYcGqk46T/+ekynpPojpE69h4GNiSJQVUWwrh7/tFr8U6fhm1yFt6wcV0Hwogk/LAEAsfLrGIbMklBvbEQ1N446UPzdfVinPsh68mD9XMxg0UUTdCRIcoNdB/WXIRauyDoX0daIeuP3YA8fvav+CD2/fgiZTmAKhenzULhw8biToY8ALXFKmbmQBqz9tmOV0BhWCvXSf6EajuQLH+6h+9/+Ht18Oqt9X9UUgouv/kiHc5zokjh12HzMWghLVyIkTmjR1oj973dj73wRHe5Gx/tJH9lN5JEHSO95eSCndRmU/cXdmKXjiyY/Ig6NUmLS8P4e+PGXoacNrXGu2APFqKIKlDSxImGscB+2rbEyVwGBtfdQ/NVvI4yLVzMYBd+8UOR7jZEK2y/9Bh5/APr70JkE3MoU9LLPSCzDg/vqz1N0778iP4HDi1P4vkYC54GncUqX+bjxLrjnYaiZgxDOdjJRyOwViMIsLKJgzToK1/3wkxI+hVO1Pz+40P07YPmwzZUNrWdg229hx3PoljNOzbd4IuKq1Rg33omcVodwD5NDfzx4E/iiEKJ16KsGm4DLGa3grTXEo2hlIQLFn4SlGYwU8DawJudVgwHZsi973M6HKHx/QgjhbPXhX/a4gP9vr9v8L8mMtMLUDjzgAAAAAElFTkSuQmCC" alt>
       <span class="name">Der Mathematik­unterricht</span>
       <span class="desc">Praxiszeitschrift für den MU</span>
     </a>
-    <a class="news-card" data-id="zdpe" href="https://www.zdpe.de" target="_blank">
+    <a class="news-card" data-id="zdpe" href="https://www.zdpe.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAV1BMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///88PDxkZGR3d3f39/fV1dXg4OCurq67u7uMjIzu7u79/f0oKChSUlLIyMidnZ0WFhYySXCsAAAAC3RSTlMAc7Ip+wzN40+WgHlcAacAAAMPSURBVFiFpVfZlqwgDByncWuiCC649P9/52URZBHae6Ye+rRiBZJUAvz8JFA2RVvVNUJ1XbVFU6a+u8errXGAun09phcR+7RRPKK/0T1dAr2/0ps0W6PJ0ssq/H4EIP6bKhPPePoeAIbHi2jjBR/CAHTh2/ae/3vjsTTAIwP49ykfE+C9dYf0OQu3fGFgonwSf9ZdOgP7mrJw479Ep2gfYQg4V//PnKAgDsn0S9aEN1jE8jcmLWzniJeLMsXHFGQUBqafhCpgMUOuHiL9WMzCgHDAebTCqh44ICCnpLN9PKRHkRMZPp6AYqPFtZc+UTtm+O+cgQ0YNm5zmIW4LwOmNjP1K/M34JMickrFz2gHkeYXeb6oBXLGgIydeHPpEesOk+g/Er3SzoSvVeNlccZryX+l+StokM5GfvJr85UWsZpNkMduADh67fhnt0LUaLMeTHL2WZnhdBjnY5dl4aHOqbhX8wOwY9ClxJ1KMCgzKuRKtoMI4GcAg9X/BjXpJFLNUEH/WANhdyoSMewmYHra3bUGnAUftreFqNvPrDlSN71dQehDdZeEk0mYsWD5IhV+GlB9Y2A/vx7J+WfRZJGQhbHJj0IdV5JxV3gPLojWRZBJFBkYLYPixeFLMeuw8o9nIHBhcyn0elDR74xl14XAALs4h2OAeeYP14CfxksxMmH88uZEp7zgi+kJqAqE1JkZx6PXO6vKh/PFmSNjoQ2lLOPGdOM+gw5D731B1CJMny6CYtKpV13YqIfjEDPjzGSi8ctZe6D38+Vm/TFKv6EorxfFn00A4tOBgzpoafM1o2kBe46v9mivqZJ5vUydyczhlWzrzyJQJzcWo+johOajSG5tRkN9POQApTdXauopC3vwjYe05L84YLf3qLVv+IEEvFNS0Fn5rFZA7nkGzhEn2J4YDOxrBv1DlufEoTexrARxdOS+BL3FfesO0YHbHnXZEz5KH5bXJwLIHddXt9/8x/xXHHo65isweeF4cOPSyNy74ktXjNyl68ki8tc+iT9ePCX+ePWV+OPlW+Hp9f8f872U3c/oIMEAAAAASUVORK5CYII=" alt>
       <span class="name">ZDPE</span>
       <span class="desc">Didaktik der Philosophie &amp; Ethik</span>
     </a>
-    <a class="news-card" data-id="ethik" href="https://www.ethik-und-unterricht.de" target="_blank">
+    <a class="news-card" data-id="ethik" href="https://www.ethik-und-unterricht.de">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAYFBMVEX////dCDvdEj3tj4r/+vrwopzeHUDzs6z4z8nlV17gMkjgNkr2wbvjSFTrg3/1vrj75eL98/L52NTiQE/wnZbnY2brfnvulpD63trfKkTqeHbyrqf0uLLnZWjobW397uwdZss3AAAAhElEQVQYlXVP2RLCIAwkhKPlKAWsFWnL//+lQm11HM3DbjbXbAj5HR32CkDzlzQW1OBGH7DJ0EN07D3tqbh04XM/jGS6ft1M884304hlSHriniC9V8kViGyktTN1tW/1sm5PLgnybsIzIWsSt9MmlNqA5ShgbEjLURjWihJPFyb+ebnFA7IBBOsnRqt7AAAAAElFTkSuQmCC" alt>
       <span class="name">Ethik &amp; Unterricht</span>
       <span class="desc">Fachzeitschrift für den Ethikunterricht</span>
     </a>
-    <a class="news-card" data-id="sep" href="https://plato.stanford.edu" target="_blank">
+    <a class="news-card" data-id="sep" href="https://plato.stanford.edu">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAZlBMVEX////+/v4AAAD8/Pz9/f28vLxubm7Y2NiKioqwsLAXFxfr6+syMjJCQkIiIiIlJSULCwuamprl5eXU1NShoaFeXl6pqalNTU3Ozs5bW1vv7+95eXlUVFRlZWXFxcWWlpYuLi4SEhJfPUjnAAAAlUlEQVQYlVWP2RKDIAxFgcguslgX6lb+/yerE7TT+5bJOZkbQp7AS+xA74lKNURtZFNnO7SD0eM0A67nLrvOB9G/UZFl8WrdounRoM7t4ei49hwNyQ6rgsutTmhENkJaPm6RCBDFSmFXcr2pmWknoVYmqgJy7pO13vNKUICGUhViunteSWet3ycntT3CDeQ/gXBTsOYXVvMHhcInqwQAAAAASUVORK5CYII=" alt>
       <span class="name">Stanford Encyclopedia</span>
       <span class="desc">Philosophie-Referenzwerk</span>
     </a>
-    <a class="news-card" data-id="philpapers" href="https://philpapers.org" target="_blank">
+    <a class="news-card" data-id="philpapers" href="https://philpapers.org">
       <img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAPFBMVEUHS6kQnUn////B0unD5tFEd77v9Ppzmc6DpdQ1bLnQ3e/h8+glYbOiu99jjsl4yJiSsNkWVq7g6PRLtXb6h2hSAAAAV0lEQVQYla3NSw6AIBAD0E5h+IO/+99VI9GAa2fT9C06EFlIA0CT81dARPINKI6hg+2ASpYJAtm+4CdYyThCdKzDaGzOPG8tk6pu6Dds/AqZ+wQHSX37CURDAgmKTxf2AAAAAElFTkSuQmCC" alt>
       <span class="name">PhilPapers</span>
       <span class="desc">Philosophie-Literaturdatenbank</span>
@@ -1092,6 +1141,22 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
 <script>
 (function () {
   const GRIDS = ['grid-de', 'grid-en', 'grid-sci', 'grid-did'];
+
+  // ── New-tab preference ──
+  var newTab = localStorage.getItem('newTab') === 'true';
+
+  function applyNewTab() {
+    var target = newTab ? '_blank' : '';
+    document.querySelectorAll('.news-card').forEach(function (c) { c.target = target; });
+    var cb = document.getElementById('gear-new-tab');
+    if (cb) cb.checked = newTab;
+  }
+
+  window.setNewTab = function (val) {
+    newTab = val;
+    localStorage.setItem('newTab', val);
+    applyNewTab();
+  };
 
   // ── Card size (migrate old 'cardSize' key) ──
   let cardWidth  = parseInt(localStorage.getItem('cardWidth')  || localStorage.getItem('cardSize') || '160');
@@ -1261,6 +1326,8 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     grid.appendChild(createCardElement(c));
   });
 
+  applyNewTab();
+
   // ── Add delete overlays to built-in cards ──
   GRIDS.forEach(function (gridId) {
     var grid = document.getElementById(gridId);
@@ -1288,6 +1355,7 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     if (!grid) return;
 
     var card = createCardElement(c);
+    if (newTab) card.target = '_blank';
     grid.appendChild(card);
     initCardDrag(card);
 
