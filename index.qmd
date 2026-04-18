@@ -28,6 +28,16 @@ title: ""
         </div>
 
         <hr class="gear-divider">
+        <div class="gear-section-title">Verhalten</div>
+        <div class="gear-row">
+          <label style="min-width:unset;flex:1">Neuer Tab</label>
+          <label class="gear-toggle">
+            <input type="checkbox" id="gear-new-tab" onchange="setNewTab(this.checked)">
+            <span class="gear-toggle-slider"></span>
+          </label>
+        </div>
+
+        <hr class="gear-divider">
         <div class="gear-section-title">Karte hinzufügen</div>
         <select id="gear-section">
           <option value="grid-de">Deutsch</option>
@@ -67,27 +77,27 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-de">▾</button>
   </div>
   <div class="news-grid" id="grid-de">
-    <a class="news-card" data-id="tagesschau" href="https://www.tagesschau.de" target="_blank">
+    <a class="news-card" data-id="tagesschau" href="https://www.tagesschau.de">
       <img src="https://www.google.com/s2/favicons?domain=tagesschau.de&sz=64" alt="">
       <span class="name">Tagesschau</span>
       <span class="desc">Öffentlich-rechtliche Nachrichten</span>
     </a>
-    <a class="news-card" data-id="zeit" href="https://www.zeit.de" target="_blank">
+    <a class="news-card" data-id="zeit" href="https://www.zeit.de">
       <img src="https://www.google.com/s2/favicons?domain=zeit.de&sz=64" alt="">
       <span class="name">ZEIT Online</span>
       <span class="desc">Qualitätspresse & Hintergründe</span>
     </a>
-    <a class="news-card" data-id="taz" href="https://www.taz.de" target="_blank">
+    <a class="news-card" data-id="taz" href="https://www.taz.de">
       <img src="https://www.google.com/s2/favicons?domain=taz.de&sz=64" alt="">
       <span class="name">taz</span>
       <span class="desc">Unabhängige linke Tageszeitung</span>
     </a>
-    <a class="news-card" data-id="heise" href="https://www.heise.de" target="_blank">
+    <a class="news-card" data-id="heise" href="https://www.heise.de">
       <img src="https://www.google.com/s2/favicons?domain=heise.de&sz=64" alt="">
       <span class="name">Heise Online</span>
       <span class="desc">IT, Tech & Wissenschaft</span>
     </a>
-    <a class="news-card" data-id="spiegel" href="https://www.spiegel.de" target="_blank">
+    <a class="news-card" data-id="spiegel" href="https://www.spiegel.de">
       <img src="https://www.google.com/s2/favicons?domain=spiegel.de&sz=64" alt="">
       <span class="name">Der Spiegel</span>
       <span class="desc">Nachrichten & Investigativjournalismus</span>
@@ -102,27 +112,27 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-en">▾</button>
   </div>
   <div class="news-grid" id="grid-en">
-    <a class="news-card" data-id="guardian" href="https://www.theguardian.com" target="_blank">
+    <a class="news-card" data-id="guardian" href="https://www.theguardian.com">
       <img src="https://www.google.com/s2/favicons?domain=theguardian.com&sz=64" alt="">
       <span class="name">The Guardian</span>
       <span class="desc">Progressive British journalism</span>
     </a>
-    <a class="news-card" data-id="bbc" href="https://www.bbc.com/news" target="_blank">
+    <a class="news-card" data-id="bbc" href="https://www.bbc.com/news">
       <img src="https://www.google.com/s2/favicons?domain=bbc.com&sz=64" alt="">
       <span class="name">BBC News</span>
       <span class="desc">International public broadcaster</span>
     </a>
-    <a class="news-card" data-id="nyt" href="https://www.nytimes.com" target="_blank">
+    <a class="news-card" data-id="nyt" href="https://www.nytimes.com">
       <img src="https://www.google.com/s2/favicons?domain=nytimes.com&sz=64" alt="">
       <span class="name">New York Times</span>
       <span class="desc">U.S. newspaper of record</span>
     </a>
-    <a class="news-card" data-id="atlantic" href="https://www.theatlantic.com" target="_blank">
+    <a class="news-card" data-id="atlantic" href="https://www.theatlantic.com">
       <img src="https://www.google.com/s2/favicons?domain=theatlantic.com&sz=64" alt="">
       <span class="name">The Atlantic</span>
       <span class="desc">Ideas, politics & culture</span>
     </a>
-    <a class="news-card" data-id="ars" href="https://arstechnica.com" target="_blank">
+    <a class="news-card" data-id="ars" href="https://arstechnica.com">
       <img src="https://www.google.com/s2/favicons?domain=arstechnica.com&sz=64" alt="">
       <span class="name">Ars Technica</span>
       <span class="desc">Tech, science & policy</span>
@@ -137,27 +147,27 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-sci">▾</button>
   </div>
   <div class="news-grid" id="grid-sci">
-    <a class="news-card" data-id="nature" href="https://www.nature.com/news" target="_blank">
+    <a class="news-card" data-id="nature" href="https://www.nature.com/news">
       <img src="https://www.google.com/s2/favicons?domain=nature.com&sz=64" alt="">
       <span class="name">Nature</span>
       <span class="desc">Multidisciplinary science journal</span>
     </a>
-    <a class="news-card" data-id="science" href="https://www.science.org/news" target="_blank">
+    <a class="news-card" data-id="science" href="https://www.science.org/news">
       <img src="https://www.google.com/s2/favicons?domain=science.org&sz=64" alt="">
       <span class="name">Science</span>
       <span class="desc">AAAS flagship journal</span>
     </a>
-    <a class="news-card" data-id="quanta" href="https://www.quantamagazine.org" target="_blank">
+    <a class="news-card" data-id="quanta" href="https://www.quantamagazine.org">
       <img src="https://www.google.com/s2/favicons?domain=quantamagazine.org&sz=64" alt="">
       <span class="name">Quanta Magazine</span>
       <span class="desc">Math, physics & biology in depth</span>
     </a>
-    <a class="news-card" data-id="sciam" href="https://www.scientificamerican.com" target="_blank">
+    <a class="news-card" data-id="sciam" href="https://www.scientificamerican.com">
       <img src="https://www.google.com/s2/favicons?domain=scientificamerican.com&sz=64" alt="">
       <span class="name">Sci. American</span>
       <span class="desc">Popular science since 1845</span>
     </a>
-    <a class="news-card" data-id="spektrum" href="https://www.spektrum.de" target="_blank">
+    <a class="news-card" data-id="spektrum" href="https://www.spektrum.de">
       <img src="https://www.google.com/s2/favicons?domain=spektrum.de&sz=64" alt="">
       <span class="name">Spektrum</span>
       <span class="desc">Wissenschaft auf Deutsch</span>
@@ -172,37 +182,37 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     <button class="toggle-btn" id="btn-grid-did">▾</button>
   </div>
   <div class="news-grid" id="grid-did">
-    <a class="news-card" data-id="zdm" href="https://link.springer.com/journal/11858" target="_blank">
+    <a class="news-card" data-id="zdm" href="https://link.springer.com/journal/11858">
       <img src="https://www.google.com/s2/favicons?domain=springer.com&sz=64" alt="">
       <span class="name">ZDM</span>
       <span class="desc">Zeitschrift für Didaktik der Mathematik</span>
     </a>
-    <a class="news-card" data-id="jmd" href="https://link.springer.com/journal/13138" target="_blank">
+    <a class="news-card" data-id="jmd" href="https://link.springer.com/journal/13138">
       <img src="https://www.google.com/s2/favicons?domain=springer.com&sz=64" alt="">
       <span class="name">JMD</span>
       <span class="desc">Journal für Mathematik-Didaktik</span>
     </a>
-    <a class="news-card" data-id="mu" href="https://www.mathematik-unterricht.de" target="_blank">
+    <a class="news-card" data-id="mu" href="https://www.mathematik-unterricht.de">
       <img src="https://www.google.com/s2/favicons?domain=mathematik-unterricht.de&sz=64" alt="">
       <span class="name">Der Mathematik&shy;unterricht</span>
       <span class="desc">Praxiszeitschrift für den MU</span>
     </a>
-    <a class="news-card" data-id="zdpe" href="https://www.zdpe.de" target="_blank">
+    <a class="news-card" data-id="zdpe" href="https://www.zdpe.de">
       <img src="https://www.google.com/s2/favicons?domain=zdpe.de&sz=64" alt="">
       <span class="name">ZDPE</span>
       <span class="desc">Didaktik der Philosophie & Ethik</span>
     </a>
-    <a class="news-card" data-id="ethik" href="https://www.ethik-und-unterricht.de" target="_blank">
+    <a class="news-card" data-id="ethik" href="https://www.ethik-und-unterricht.de">
       <img src="https://www.google.com/s2/favicons?domain=ethik-und-unterricht.de&sz=64" alt="">
       <span class="name">Ethik & Unterricht</span>
       <span class="desc">Fachzeitschrift für den Ethikunterricht</span>
     </a>
-    <a class="news-card" data-id="sep" href="https://plato.stanford.edu" target="_blank">
+    <a class="news-card" data-id="sep" href="https://plato.stanford.edu">
       <img src="https://www.google.com/s2/favicons?domain=plato.stanford.edu&sz=64" alt="">
       <span class="name">Stanford Encyclopedia</span>
       <span class="desc">Philosophie-Referenzwerk</span>
     </a>
-    <a class="news-card" data-id="philpapers" href="https://philpapers.org" target="_blank">
+    <a class="news-card" data-id="philpapers" href="https://philpapers.org">
       <img src="https://www.google.com/s2/favicons?domain=philpapers.org&sz=64" alt="">
       <span class="name">PhilPapers</span>
       <span class="desc">Philosophie-Literaturdatenbank</span>
@@ -213,6 +223,22 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
 <script>
 (function () {
   const GRIDS = ['grid-de', 'grid-en', 'grid-sci', 'grid-did'];
+
+  // ── New-tab preference ──
+  var newTab = localStorage.getItem('newTab') === 'true';
+
+  function applyNewTab() {
+    var target = newTab ? '_blank' : '';
+    document.querySelectorAll('.news-card').forEach(function (c) { c.target = target; });
+    var cb = document.getElementById('gear-new-tab');
+    if (cb) cb.checked = newTab;
+  }
+
+  window.setNewTab = function (val) {
+    newTab = val;
+    localStorage.setItem('newTab', val);
+    applyNewTab();
+  };
 
   // ── Card size (migrate old 'cardSize' key) ──
   let cardWidth  = parseInt(localStorage.getItem('cardWidth')  || localStorage.getItem('cardSize') || '160');
@@ -382,6 +408,8 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     grid.appendChild(createCardElement(c));
   });
 
+  applyNewTab();
+
   // ── Add delete overlays to built-in cards ──
   GRIDS.forEach(function (gridId) {
     var grid = document.getElementById(gridId);
@@ -409,6 +437,7 @@ document.getElementById('ddg-form').addEventListener('submit', function(e) {
     if (!grid) return;
 
     var card = createCardElement(c);
+    if (newTab) card.target = '_blank';
     grid.appendChild(card);
     initCardDrag(card);
 

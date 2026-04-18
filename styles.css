@@ -417,6 +417,51 @@ h1.page-title {
   pointer-events: none;
 }
 
+/* ── Gear toggle switch ── */
+.gear-toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.gear-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.gear-toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.gear-toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.gear-toggle input:checked + .gear-toggle-slider {
+  background: #5b8dee;
+}
+
+.gear-toggle input:checked + .gear-toggle-slider::before {
+  transform: translateX(16px);
+}
+
 /* ── Delete overlay ── */
 .delete-overlay {
   display: none;
